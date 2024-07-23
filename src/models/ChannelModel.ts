@@ -19,4 +19,19 @@ const ChannelSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
+const channelMessagesSchema = new mongoose.Schema(
+  {
+    channel_id: {
+      type: Schema.Types.ObjectId,
+    },
+    message: String,
+    sender: { type: Schema.Types.ObjectId, ref: "authentication" },
+  },
+  { timestamps: true }
+);
+
 export const ChannelModel = mongoose.model("channel", ChannelSchema);
+export const ChannelMessageModel = mongoose.model(
+  "channelMessage",
+  channelMessagesSchema
+);

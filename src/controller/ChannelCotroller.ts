@@ -2,6 +2,15 @@ import { Request, Response } from "express";
 import { handleErrors } from "./AuthController";
 import { ChannelModel } from "../models/ChannelModel";
 
+export const getAllChannels = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    const channels = await ChannelModel.find({ participants: { $in: [id] } });
+    res.send({ channels });
+  } catch (error) {
+    return res.status(404).send(handleErrors(error));
+  }
+};
 export const postChannel = async (req: Request, res: Response) => {
   try {
     const { channel_name, is_private } = req.body;
