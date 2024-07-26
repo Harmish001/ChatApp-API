@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { ChatModel } from "../models/ChatModel";
+import { ChatModel, ChatRoomModel } from "../models/ChatModel";
 import { handleErrors } from "./AuthController";
 import { UserInfoModel } from "../models/UserModel";
 import { io } from "../index";
@@ -20,15 +20,22 @@ import { io } from "../index";
 //     return res.status(404).send(handleErrors(error));
 //   }
 // };
-export const postChat = (data: any) => {
+export const postChat = async (data: any) => {
   try {
-    const { message, sender, receiver } = data;
-    const chat = new ChatModel({
-      messages: { message, sender, receiver },
-      participants: [sender, receiver],
+    const { message, sender, receiver, room_id } = data;
+    const chatRoom = await ChatRoomModel.findOne({
+      participants: { $in: [sender, receiver] },
     });
-    chat.save();
-    io.emit(`new-chat`, data);
+    if (chatRoom) {
+      const chat = new ChatModel({
+        message,
+        sender,
+        receiver,
+        room_id,
+      });
+      chat.save();
+    }
+    // io.emit(`new-chat`, data);
   } catch (error) {
     console.log(error);
   }
@@ -119,7 +126,10 @@ export const getChats = async (req: Request, res: Response) => {
     if (!id) {
       res.send({ message: "Not a valid chat", success: false });
     }
-    const chatRoom = await ChatModel.findOne({ _id: id });
+    const chatRoom = await ChatModel.find(
+      { room_id: id },
+      { message: 1, sender: 1, receiver: 1, _id: 0 }
+    );
     res.send({
       success: true,
       message: "Chats fetched succesfully",

@@ -4,6 +4,7 @@ import {
   updateuserInfo,
   getuserInfo,
   uploadProfilePic,
+  getChatRoomId,
 } from "../controller/UsersController";
 import { Router } from "express";
 
@@ -14,5 +15,6 @@ router.post("/addUserInfo", adduserInfo);
 router.put("/updateUserInfo", updateuserInfo);
 router.get("/getUserInfo/:username", getuserInfo);
 router.post("/uploadImage/:id", uploadProfilePic);
+router.post("/get/chat/room/id", getChatRoomId);
 
 export default router;

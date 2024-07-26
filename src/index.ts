@@ -10,6 +10,7 @@ import http from "http";
 import cors from "cors";
 import { postChat, updateChat } from "./controller/ChatController";
 import bodyParser from "body-parser";
+import { Socket, SocketOptions } from "socket.io-client";
 
 const port = process.env.SERVER_PORT || 3000;
 const DBURI = process.env.MONGO_URI || "";
@@ -29,7 +30,7 @@ io.listen(5000);
 let onlineUsers = new Map();
 let focusedRooms = new Map();
 
-io.on("connection", (socket: any) => {
+io.on("connection", (socket) => {
   socket.on("login", (userId: string) => {
     if (onlineUsers.has(userId)) {
       const prev = onlineUsers.get(userId);
@@ -43,19 +44,25 @@ io.on("connection", (socket: any) => {
     console.log(onlineUsers);
     io.emit("updateOnlineUsers", Array.from(onlineUsers.keys()));
   });
+  socket.on("roomId", (roomId:string) => {
+    console.log("roomId",roomId)
+    socket.join(roomId)
+  })
 
-  socket.on(`send-message`, (message: any) => {
-    const messageReceiver = onlineUsers.get(message.receiver);
-    const messageSender = onlineUsers.get(message.sender);
-    console.log("messageSender", messageSender);
-    updateChat(message);
-    io.to(messageSender).emit(`message`, message);
-    if (messageReceiver) {
-      io.to(messageReceiver).emit(`message`, message);
-    }
-  });
+  // socket.on(`send-message`, (message: any) => {
+  //   const messageReceiver = onlineUsers.get(message.receiver);
+  //   const messageSender = onlineUsers.get(message.sender);
+  //   console.log("messageSender", messageSender);
+  //   // updateChat(message);
+  //   io.to(messageSender).emit(`message`, message);
+  //   if (messageReceiver) {
+  //     io.to(messageReceiver).emit(`message`, message);
+  //   }
+  // });
 
   socket.on("new-message", (message: any) => {
+    console.log("new-message",message)
+    io.to(message.room_id).emit(`message`, message)
     postChat(message);
   });
 

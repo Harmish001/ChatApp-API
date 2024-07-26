@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import { AuthModel } from "../models/AuthModel";
 import { UserInfoModel } from "../models/UserModel";
 import { handleErrors } from "./AuthController";
-import { ChatModel } from "../models/ChatModel";
+import { ChatModel, ChatRoomModel } from "../models/ChatModel";
 import fs from "fs";
 import { Compute, GoogleAuth, auth } from "google-auth-library";
 import { google } from "googleapis";
@@ -18,12 +18,7 @@ export const getUsers = async (req: Request, res: Response) => {
       _id: {
         $ne: [id],
       },
-    })
-      .select("username _id")
-      .populate({
-        path: "userInfo",
-        select: "display_name profile_picture contact email",
-      });
+    });
     res.send({
       success: true,
       users: users,
@@ -155,6 +150,25 @@ export const uploadProfilePic = async (req: Request, res: Response) => {
       });
     } catch (err) {
       return res.status(404).send(handleErrors(err));
+    }
+  } catch (error) {
+    return res.status(404).send(handleErrors(error));
+  }
+};
+
+export const getChatRoomId = async (req: Request, res: Response) => {
+  try {
+    const { sender, receiver } = req.body;
+    const chatRoom = await ChatRoomModel.findOne(
+      {
+        participants: { $all: [sender, receiver] },
+      },
+      { _id: 1 }
+    );
+    if (chatRoom) {
+      res.send({ chatRoom });
+    } else {
+      res.send({ chatRoom: { _id: null } });
     }
   } catch (error) {
     return res.status(404).send(handleErrors(error));

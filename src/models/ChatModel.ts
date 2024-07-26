@@ -1,6 +1,6 @@
 import mongoose, { Schema, SchemaType } from "mongoose";
 
-const messageSchema = new mongoose.Schema(
+const ChatSchema = new mongoose.Schema(
   {
     message: {
       type: String,
@@ -9,28 +9,37 @@ const messageSchema = new mongoose.Schema(
     sender: {
       type: Schema.Types.ObjectId,
       required: [true, "Sender not found"],
-      ref: "authentication",
+      ref: "auth",
     },
     receiver: {
       type: Schema.Types.ObjectId,
       required: [true, "Receiver not found"],
-      ref: "authentication",
+      ref: "auth",
+    },
+    room_id: {
+      type: Schema.Types.ObjectId,
+      ref: "chatRoom",
     },
   },
   { timestamps: true }
 );
 
-const ChatSchema = new mongoose.Schema(
+const ChatRoomSchema = new mongoose.Schema(
   {
-    messages: {
-      type: [messageSchema],
+    preferences: {
+      theme: {
+        type: String,
+        default: "none",
+      },
+      is_pinned: {
+        type: Boolean,
+        default: false,
+      },
     },
-    participants: [{ type: Schema.Types.ObjectId, ref: "authentication" }],
-    bg_image: {
-      type: String,
-    },
+    participants: [{ type: Schema.Types.ObjectId, ref: "auth" }],
   },
   { timestamps: true }
 );
 
 export const ChatModel = mongoose.model("chat", ChatSchema);
+export const ChatRoomModel = mongoose.model("chatRoom", ChatRoomSchema);
