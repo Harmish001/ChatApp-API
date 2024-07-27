@@ -84,32 +84,13 @@ export const getChatRooms = async (req: Request, res: Response) => {
     if (!id) {
       res.send({ message: "Not a valid user", success: false });
     }
-    const chatRooms = await ChatModel.find(
-      {
-        participants: { $in: [id] },
-      },
-      { participants: { $elemMatch: [id] } }
-    )
-      .select("participants")
-      .populate({
-        path: "participants",
-        select: "username",
-        populate: {
-          path: "userInfo",
-          model: UserInfoModel,
-          select: "display_name profile_picture",
-        },
-      });
-    // .populate({
-    //   path: "messages.sender messages.receiver",
-    //   model: AuthModel,
-    //   select: "username -_id",
-    //   populate: {
-    //     path: "userInfo",
-    //     model: UserInfoModel,
-    //     select: "display_name profile_picture -_id",
-    //   },
-    // })
+    const chatRooms = await ChatRoomModel.find({
+      participants: { $in: [id] },
+    }).populate({
+      path: "participants",
+      // model: AuthModel,
+      select: "username",
+    });
     res.send({
       success: true,
       message: "Rooms fetched succesfully",
@@ -128,7 +109,7 @@ export const getChats = async (req: Request, res: Response) => {
     }
     const chatRoom = await ChatModel.find(
       { room_id: id },
-      { message: 1, sender: 1, receiver: 1, _id: 0 }
+      { message: 1, sender: 1, receiver: 1, _id: 0, createdAt: 1 }
     );
     res.send({
       success: true,

@@ -10,13 +10,18 @@ import http from "http";
 import cors from "cors";
 import { postChat, updateChat } from "./controller/ChatController";
 import bodyParser from "body-parser";
-import { Socket, SocketOptions } from "socket.io-client";
+import { postChannelMessage } from "./controller/ChannelMessageController";
 
 const port = process.env.SERVER_PORT || 3000;
 const DBURI = process.env.MONGO_URI || "";
 
 const app = express();
-app.use(bodyParser.raw({ type: ["image/jpeg", "image/png", "image/jpg"], limit: 52428800 }));
+app.use(
+  bodyParser.raw({
+    type: ["image/jpeg", "image/png", "image/jpg"],
+    limit: 52428800,
+  })
+);
 const server = http.createServer(app);
 export const io = new Server(server, {
   cors: {
@@ -31,23 +36,31 @@ let onlineUsers = new Map();
 let focusedRooms = new Map();
 
 io.on("connection", (socket) => {
-  socket.on("login", (userId: string) => {
-    if (onlineUsers.has(userId)) {
-      const prev = onlineUsers.get(userId);
-      if (prev) {
-        io.to(prev).emit("duplicateuser", prev);
-      }
-      console.log("previos", prev, socket.id);
-      console.log("Already LoggedIn", socket.id, userId);
-    }
-    onlineUsers.set(userId, socket.id);
-    console.log(onlineUsers);
-    io.emit("updateOnlineUsers", Array.from(onlineUsers.keys()));
+  // socket.on("login", (userId: string) => {
+  //   if (onlineUsers.has(userId)) {
+  //     const prev = onlineUsers.get(userId);
+  //     if (prev) {
+  //       io.to(prev).emit("duplicateuser", prev);
+  //     }
+  //     console.log("previos", prev, socket.id);
+  //     console.log("Already LoggedIn", socket.id, userId);
+  //   }
+  //   onlineUsers.set(userId, socket.id);
+  //   console.log(onlineUsers);
+  //   io.emit("updateOnlineUsers", Array.from(onlineUsers.keys()));
+  // });
+  socket.on("roomId", (roomId: string) => {
+    socket.join(roomId);
   });
-  socket.on("roomId", (roomId:string) => {
-    console.log("roomId",roomId)
-    socket.join(roomId)
-  })
+
+  socket.on("joinChannel", (channelId: string) => {
+    socket.join(channelId);
+  });
+
+  socket.on("sendChannelMessage", (payload) => {
+    console.log(payload);
+    postChannelMessage(payload);
+  });
 
   // socket.on(`send-message`, (message: any) => {
   //   const messageReceiver = onlineUsers.get(message.receiver);
@@ -61,8 +74,7 @@ io.on("connection", (socket) => {
   // });
 
   socket.on("new-message", (message: any) => {
-    console.log("new-message",message)
-    io.to(message.room_id).emit(`message`, message)
+    io.to(message.room_id).emit(`message`, message);
     postChat(message);
   });
 

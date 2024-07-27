@@ -7,7 +7,7 @@ const ChannelSchema = new mongoose.Schema(
     },
     participants: {
       type: [Schema.Types.ObjectId],
-      ref: "authentication",
+      ref: "auth",
     },
     channel_theme: {
       type: String,
@@ -23,9 +23,10 @@ const channelMessagesSchema = new mongoose.Schema(
   {
     channel_id: {
       type: Schema.Types.ObjectId,
+      ref: "channel",
     },
     message: String,
-    sender: { type: Schema.Types.ObjectId, ref: "authentication" },
+    sender: { type: Schema.Types.ObjectId, ref: "auth" },
   },
   { timestamps: true }
 );
