@@ -48,3 +48,16 @@ export const getChannelMessage = async (req: Request, res: Response) => {
     return res.status(404).send(handleErrors(error));
   }
 };
+
+export const filterMessasges = async (body: any) => {
+  try {
+    const { message, channel_id } = body;
+    const Channel = await ChannelMessageModel.find({
+      channel_id: channel_id,
+      $text: { $search: message },
+    });
+    return Channel
+  } catch (err) {
+    console.log(err);
+  }
+};

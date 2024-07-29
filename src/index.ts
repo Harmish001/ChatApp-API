@@ -10,7 +10,10 @@ import http from "http";
 import cors from "cors";
 import { postChat, updateChat } from "./controller/ChatController";
 import bodyParser from "body-parser";
-import { postChannelMessage } from "./controller/ChannelMessageController";
+import {
+  filterMessasges,
+  postChannelMessage,
+} from "./controller/ChannelMessageController";
 
 const port = process.env.SERVER_PORT || 3000;
 const DBURI = process.env.MONGO_URI || "";
@@ -72,10 +75,16 @@ io.on("connection", (socket) => {
   //     io.to(messageReceiver).emit(`message`, message);
   //   }
   // });
-
   socket.on("new-message", (message: any) => {
     io.to(message.room_id).emit(`message`, message);
     postChat(message);
+  });
+
+  socket.on("filter", async(body: any) => {
+    console.log("body",body)
+    const result = await filterMessasges(body)
+    console.log(result)
+    socket.emit("filteredResult", result);
   });
 
   socket.on("focus", (roomId: string) => {

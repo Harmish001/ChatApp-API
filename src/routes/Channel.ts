@@ -1,4 +1,5 @@
 import {
+  filterMessasges,
   getChannelMessage,
   postChannelMessage,
 } from "../controller/ChannelMessageController";
@@ -23,5 +24,6 @@ router.delete("/delete/:channel_id/:id", deleteParticipant);
 router.post("/channel/message", postChannelMessage);
 router.get("/channel/messages/:channel_id", getChannelMessage);
 router.get("/get/all/channels", getAllChannels);
+router.post("/filter/channel/message", filterMessasges);
 
 export default router;
