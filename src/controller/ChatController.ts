@@ -138,3 +138,20 @@ export const setBackground = async (req: Request, res: Response) => {
     return res.status(404).send(handleErrors(error));
   }
 };
+
+export const filterChatMessages = async (body: any) => {
+  try {
+    const { message, room_id } = body;
+    const Chat = await ChatModel.find(
+      {
+        room_id: room_id,
+        $text: { $search: message },
+      },
+      { message: 1 }
+    );
+    const messages = Chat.length > 0 ? Chat.map((item) => item.message) : [];
+    return messages;
+  } catch (error) {
+    console.log(error);
+  }
+};

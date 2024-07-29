@@ -49,14 +49,19 @@ export const getChannelMessage = async (req: Request, res: Response) => {
   }
 };
 
-export const filterMessasges = async (body: any) => {
+export const filterChannelMessasges = async (body: any) => {
   try {
     const { message, channel_id } = body;
-    const Channel = await ChannelMessageModel.find({
-      channel_id: channel_id,
-      $text: { $search: message },
-    });
-    return Channel
+    const Channel = await ChannelMessageModel.find(
+      {
+        channel_id: channel_id,
+        $text: { $search: message },
+      },
+      { message: 1 }
+    );
+    const messages =
+      Channel.length > 0 ? Channel.map((item) => item.message) : [];
+    return messages;
   } catch (err) {
     console.log(err);
   }

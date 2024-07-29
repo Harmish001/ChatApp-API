@@ -8,10 +8,10 @@ import ChannelRouter from "./routes/Channel";
 import { Server } from "socket.io";
 import http from "http";
 import cors from "cors";
-import { postChat, updateChat } from "./controller/ChatController";
+import { filterChatMessages, postChat, updateChat } from "./controller/ChatController";
 import bodyParser from "body-parser";
 import {
-  filterMessasges,
+  filterChannelMessasges,
   postChannelMessage,
 } from "./controller/ChannelMessageController";
 
@@ -61,7 +61,6 @@ io.on("connection", (socket) => {
   });
 
   socket.on("sendChannelMessage", (payload) => {
-    console.log(payload);
     postChannelMessage(payload);
   });
 
@@ -81,10 +80,13 @@ io.on("connection", (socket) => {
   });
 
   socket.on("filter", async(body: any) => {
-    console.log("body",body)
-    const result = await filterMessasges(body)
-    console.log(result)
+    const result = await filterChannelMessasges(body)
     socket.emit("filteredResult", result);
+  });
+
+  socket.on("filterChat", async(body: any) => {
+    const result = await filterChatMessages(body);
+    socket.emit("filteredChatResult", result);
   });
 
   socket.on("focus", (roomId: string) => {
