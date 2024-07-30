@@ -94,13 +94,14 @@ export const updateuserInfo = async (req: Request, res: Response) => {
 export const getuserInfo = async (req: Request, res: Response) => {
   try {
     const auth = await AuthModel.findOne({ username: req.params.username });
-    const user = await UserInfoModel.findOne({ user_id: auth?._id });
-    if (user) {
-      res.status(201).send({ success: true, user: user });
-    } else {
-      res.status(201).send({ success: true, user: {} });
-    }
-  } catch (error) {
+    // const user = await UserInfoModel.findOne({ user_id: auth?._id });
+    // if (user) {
+    //   res.status(201).send({ success: true, user: user });
+    // } else {
+      //   res.status(201).send({ success: true, user: {} });
+      // }
+        res.status(201).send({ success: true, user: auth });
+    } catch (error) {
     return res.status(404).send(handleErrors(error));
   }
 };
