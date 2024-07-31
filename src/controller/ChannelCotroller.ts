@@ -14,10 +14,11 @@ export const getChannels = async (req: Request, res: Response) => {
 
 export const postChannel = async (req: Request, res: Response) => {
 	try {
-		const { channel_name, is_private } = req.body;
+		const { channel_name, is_private, userId } = req.body;
 		const channel = new ChannelModel({
 			channel_name,
 			is_private,
+			participants: [userId]
 		});
 		channel.save();
 		res.send({

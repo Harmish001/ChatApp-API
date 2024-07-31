@@ -8,7 +8,7 @@ import ChannelRouter from "./routes/Channel";
 import { Server } from "socket.io";
 import http from "http";
 import cors from "cors";
-import { filterChatMessages, postChat, updateChat } from "./controller/ChatController";
+import { filterChatMessages, postChat } from "./controller/ChatController";
 import bodyParser from "body-parser";
 import {
   filterChannelMessasges,

@@ -134,7 +134,6 @@ export const uploadProfilePic = async (req: Request, res: Response) => {
         requestBody,
         media: media,
       });
-      console.log(file.data.id);
       const user: any = await AuthModel.findOne({ _id: id });
       const authModel = await UserInfoModel.findByIdAndUpdate(
         { _id: user.userInfo },
@@ -144,7 +143,6 @@ export const uploadProfilePic = async (req: Request, res: Response) => {
           },
         }
       );
-      console.log("usre", authModel);
       res.send({
         image: `https://drive.google.com/thumbnail?id=${file.data.id}&sz=w1000`,
         image_id: file.data.id,
@@ -169,7 +167,11 @@ export const getChatRoomId = async (req: Request, res: Response) => {
     if (chatRoom) {
       res.send({ chatRoom });
     } else {
-      res.send({ chatRoom: { _id: null } });
+      const chatRoom = new ChatRoomModel({
+        participants: [sender, receiver],
+      });
+      chatRoom.save();
+      res.send({ chatRoom: { _id: chatRoom._id } });
     }
   } catch (error) {
     return res.status(404).send(handleErrors(error));

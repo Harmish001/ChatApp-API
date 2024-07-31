@@ -24,14 +24,14 @@ export const postChat = async (data: any) => {
   try {
     const { message, sender, receiver, room_id } = data;
     const chatRoom = await ChatRoomModel.findOne({
-      participants: { $in: [sender, receiver] },
+      participants: { $all: [sender, receiver] },
     });
     if (chatRoom) {
       const chat = new ChatModel({
         message,
         sender,
         receiver,
-        room_id,
+        room_id: chatRoom._id,
       });
       chat.save();
     }
@@ -41,19 +41,19 @@ export const postChat = async (data: any) => {
   }
 };
 
-export const updateChat = async (data: any) => {
-  try {
-    const { message, sender, receiver, room_id } = data;
-    await ChatModel.findByIdAndUpdate(
-      { _id: room_id },
-      {
-        $push: { messages: { message, sender, receiver } },
-      }
-    );
-  } catch (error) {
-    console.log(error);
-  }
-};
+// export const updateChat = async (data: any) => {
+//   try {
+//     const { message, sender, receiver, room_id } = data;
+//     await ChatModel.findByIdAndUpdate(
+//       { _id: room_id },
+//       {
+//         $push: { messages: { message, sender, receiver } },
+//       }
+//     );
+//   } catch (error) {
+//     console.log(error);
+//   }
+// };
 // export const updateChat = async (req: Request, res: Response) => {
 //   try {
 //     if (
@@ -88,8 +88,7 @@ export const getChatRooms = async (req: Request, res: Response) => {
       participants: { $in: [id] },
     }).populate({
       path: "participants",
-      // model: AuthModel,
-      select: "username",
+      select: "username userInfo",
     });
     res.send({
       success: true,
