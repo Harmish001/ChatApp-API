@@ -70,6 +70,8 @@ export const updateuserInfo = async (req: Request, res: Response) => {
       profile_picture,
       user_id,
       gender,
+      bio,
+      tag,
     } = req.body;
     await AuthModel.findByIdAndUpdate(
       { _id: user_id },
@@ -81,6 +83,8 @@ export const updateuserInfo = async (req: Request, res: Response) => {
             email,
             profile_picture,
             gender,
+            bio,
+            tag,
           },
         },
       }
