@@ -5,7 +5,6 @@ const authSchema = new mongoose.Schema({
 	username: {
 		required: [true, "Please Enter username"],
 		type: String,
-		unique: true,
 	},
 	password: {
 		type: String,

@@ -30,7 +30,7 @@ export const login = async (req: any, res: any) => {
 
 export const signup = async (req: any, res: any) => {
 	try {
-		const { username, password } = req.body;
+		const { username, password, email } = req.body;
 		if (!username || !password)
 			return res.status(504).send({
 				success: false,
@@ -41,10 +41,11 @@ export const signup = async (req: any, res: any) => {
 			password,
 			userInfo: {
 				display_name: username,
+				email,
 			},
 		});
 		user.save();
-		res.status(201).json({ message: "User added successfully", success: true });
+		res.status(201).json({ message: "User added successfully", success: true, user});
 	} catch (error) {
 		return res.status(404).send(handleErrors(error));
 	}

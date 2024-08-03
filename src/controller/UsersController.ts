@@ -62,25 +62,27 @@ export const adduserInfo = async (req: Request, res: Response) => {
 
 export const updateuserInfo = async (req: Request, res: Response) => {
   try {
-    const { username, display_name, contact, email, profile_picture } =
-      req.body;
-    const auth = await AuthModel.findOne({ username });
-    if (!auth) {
-      return res.status(404).json({ error: "User not found" });
-    }
-    const user = await UserInfoModel.findOne({ user_id: auth._id });
-    if (!user) {
-      return res.status(404).json({ error: "User Information not found" });
-    }
-    user.display_name = display_name || "";
-    user.contact = contact || "";
-    user.email = email || "";
-    user.profile_picture = profile_picture || empty_profile_image;
-    user.save();
+    const {
+      username,
+      display_name,
+      contact,
+      email,
+      profile_picture,
+      user_id,
+      gender,
+    } = req.body;
     await AuthModel.findByIdAndUpdate(
-      { _id: auth._id },
+      { _id: user_id },
       {
-        $set: { userInfo: user._id },
+        $set: {
+          userInfo: {
+            display_name,
+            contact,
+            email,
+            profile_picture,
+            gender,
+          },
+        },
       }
     );
     res
@@ -98,10 +100,10 @@ export const getuserInfo = async (req: Request, res: Response) => {
     // if (user) {
     //   res.status(201).send({ success: true, user: user });
     // } else {
-      //   res.status(201).send({ success: true, user: {} });
-      // }
-        res.status(201).send({ success: true, user: auth });
-    } catch (error) {
+    //   res.status(201).send({ success: true, user: {} });
+    // }
+    res.status(201).send({ success: true, user: auth });
+  } catch (error) {
     return res.status(404).send(handleErrors(error));
   }
 };
