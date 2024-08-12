@@ -17,6 +17,7 @@ import {
 
 const port = process.env.SERVER_PORT || 3000;
 const DBURI = process.env.MONGO_URI || "";
+const SOCKETURI:any = process.env.PORT || 5000;
 
 const app = express();
 app.use(
@@ -33,7 +34,7 @@ export const io = new Server(server, {
   },
 });
 app.use(cors({ origin: "*" }));
-io.listen(5000);
+io.listen(SOCKETURI);
 
 let onlineUsers = new Map();
 let focusedRooms = new Map();
