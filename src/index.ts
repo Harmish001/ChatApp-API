@@ -30,10 +30,11 @@ const server = http.createServer(app);
 export const io = new Server(server, {
   cors: {
     origin: "*", // You can specify your frontend URL instead of "*"
-    methods: ["GET", "POST"],
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    credentials: true,
   },
 });
-app.use(cors({ origin: "*" }));
+app.use(cors());
 io.listen(SOCKETURI);
 
 let onlineUsers = new Map();
