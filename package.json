@@ -7,6 +7,7 @@
     "start": "nodemon --inspect dist/bundle.cjs",
     "build": "tsc",
     "dev": "webpack --config webpack.config.cjs --mode development --watch",
+    "build-new": "webpack --config webpack.config.cjs --mode production",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
