@@ -20,16 +20,11 @@ const DBURI = process.env.MONGO_URI || "";
 const SOCKETURI:any = process.env.PORT || 5000;
 
 const app = express();
-app.use(function(req, res, next) {
-  // res.header("Access-Control-Allow-Origin", "*");
-  // const allowedOrigins = ['http://localhost:3000', 'http://gamebrag.onrender.com', 'https://gamebrag.onrender.com'];
-  // const origin = req.headers.origin;
-  res.setHeader('Access-Control-Allow-Origin', "*");
-  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
-  // res.header("Access-Control-Allow-credentials", true);
-  res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, UPDATE");
-  next();
-});
+app.use(cors({
+  origin: "*",
+  methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+  credentials: true,
+}));
 app.use(
   bodyParser.raw({
     type: ["image/jpeg", "image/png", "image/jpg"],
@@ -39,12 +34,11 @@ app.use(
 const server = http.createServer(app);
 export const io = new Server(server, {
   cors: {
-   origin: /\.onrender\.com$/,
-    methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+    origin: "*", // You can specify your frontend URL instead of "*"
+    methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true,
   },
 });
-app.use(cors());
 io.listen(SOCKETURI);
 
 let onlineUsers = new Map();
