@@ -21,7 +21,7 @@ const SOCKETURI:any = process.env.PORT || 5000;
 
 const app = express();
 app.use(cors({
-  origin: "*",
+  origin: process.env.ORIGIN || "*",
   methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
   credentials: true,
 }));
