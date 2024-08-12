@@ -39,8 +39,8 @@ app.use(
 const server = http.createServer(app);
 export const io = new Server(server, {
   cors: {
-    origin: "*", // You can specify your frontend URL instead of "*"
-    methods: ["GET", "POST", "PUT", "DELETE"],
+   origin: /\.onrender\.com$/,
+    methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
     credentials: true,
   },
 });
