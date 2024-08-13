@@ -31,7 +31,9 @@ app.use(
     limit: 52428800,
   })
 );
-const server = http.createServer(app);
+const server = app.listen(port, () => {
+  console.log(`Server is running at ${port} `);
+})
 export const io = new Server(server, {
   cors: {
     origin: "*", // You can specify your frontend URL instead of "*"
@@ -122,13 +124,7 @@ io.on("connection", (socket) => {
 });
 
 mongoose.connect(DBURI).then(() => {
-  const host:any = process.env.HOST || '0.0.0.0';
-  server.listen(port, host, () => {
-    const address:any = server.address();
-    console.log(`Server is running at ${address?.toString()} `);
-    console.log(`Server is running at ${address?.address} `);
-    console.log(`Server is running at ${address?.port} `);
-  })
+  console.log("Started")
 }
 );
 
