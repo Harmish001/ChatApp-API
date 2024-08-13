@@ -121,10 +121,12 @@ io.on("connection", (socket) => {
   });
 });
 
-mongoose.connect(DBURI).then(() =>
-  server.listen(port, () => {
-    console.log(`Server is running at ${server.address} `);
+mongoose.connect(DBURI).then(() => {
+  const host:any = process.env.HOST || '0.0.0.0';
+  server.listen(port, host, () => {
+    console.log(`Server is running at ${server.address()} `);
   })
+}
 );
 
 app.use(express.json());
