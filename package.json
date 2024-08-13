@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "start": "nodemon --inspect dist/bundle.cjs",
+    "startup": "node dist/bundle.cjs",
     "build": "tsc",
     "dev": "webpack --config webpack.config.cjs --mode development --watch",
     "build-new": "webpack --config webpack.config.cjs --mode production",
