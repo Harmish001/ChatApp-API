@@ -123,8 +123,11 @@ io.on("connection", (socket) => {
 
 mongoose.connect(DBURI).then(() => {
   const host:any = process.env.HOST || '0.0.0.0';
+  const address:any = server.address();
   server.listen(port, host, () => {
-    console.log(`Server is running at ${server.address()} `);
+    console.log(`Server is running at ${address?.toString()} `);
+    console.log(`Server is running at ${address?.address} `);
+    console.log(`Server is running at ${address?.port} `);
   })
 }
 );
