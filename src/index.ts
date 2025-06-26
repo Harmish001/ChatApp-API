@@ -20,11 +20,13 @@ const DBURI = process.env.MONGO_URI || "";
 const SOCKETURI:any = process.env.PORT || 5000;
 
 const app = express();
+app.set('trust proxy', 1);
 app.use(cors({
-  origin: process.env.ORIGIN || "*",
+  origin: process.env.ORIGIN || process.env.FRONTEND_DOMAIN,
   methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
   credentials: true,
 }));
+app.use(express.json());
 app.use(
   bodyParser.raw({
     type: ["image/jpeg", "image/png", "image/jpg"],
@@ -41,7 +43,7 @@ export const io = new Server(server, {
     credentials: true,
   },
 });
-io.listen(SOCKETURI);
+// io.listen(SOCKETURI);
 
 let onlineUsers = new Map();
 let focusedRooms = new Map();
@@ -128,7 +130,6 @@ mongoose.connect(DBURI).then(() => {
 }
 );
 
-app.use(express.json());
 app.use(authRouter);
 app.use(userRouter);
 app.use(ChatRouter);
